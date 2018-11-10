@@ -1,6 +1,6 @@
 import pandas as pd
 
-articles = pd.read_pickle('analyzed_articles.pkl')
+articles = pd.read_pickle('./pickle-files/analyzed_articles.pkl')
 
 print('length of articles', len(articles))
 

@@ -5,11 +5,11 @@ algo_client = Algorithmia.client('sim5s5q8M4yVke97xO5CFiP08CF1')
 algo = algo_client.algo('web/AnalyzeURL/0.2.17')
 
 def save_obj (obj, name):
-  with open(name + '.pkl', 'wb') as f:
+  with open('./pickle-files/' + name + '.pkl', 'wb') as f:
     pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def load_obj (name):
-  with open(name + '.pkl', 'rb') as f:
+  with open('./pickle-files/' + name + '.pkl', 'rb') as f:
     return pickle.load(f)
 
 articles = []
