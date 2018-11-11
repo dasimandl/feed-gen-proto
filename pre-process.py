@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 import pandas as pd
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import wordnet as wn
@@ -41,7 +42,7 @@ def pre_process (text):
   tokens = word_tokenize(text)
   pos_tokens = pos_tag(tokens)
   lemmatized_tokens = [lemma.lemmatize(token[0], pos=get_wordnet_pos(token[1])) for token in pos_tokens]
-  text = [word for word in lemmatized_tokens if word not in custom_stopwords]
+  text = " ".join(word for word in lemmatized_tokens if word not in custom_stopwords)
   return text
 
 
