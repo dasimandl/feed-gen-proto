@@ -27,9 +27,13 @@ def get_wordnet_pos(tag):
     else:
         return wn.VERB
 
+
+
 def pre_process (text):
   text = text.lower()
   text = re.sub("(\\d|\\W|\\_)+"," ",text)
+  text = re.sub("software engineering daily|transcript|introduction|end of interview"," ",text)
+  text = re.sub('(sponsor message).*?(interview)'," ",text)
   tokens = word_tokenize(text)
   pos_tokens = pos_tag(tokens)
   lemmatized_tokens = [lemma.lemmatize(token[0], pos=get_wordnet_pos(token[1])) for token in pos_tokens]
@@ -38,7 +42,7 @@ def pre_process (text):
 # hn = HackerNews()
 
 # print(hn.top_stories(limit=10))
-text = textract.process('./SED702-BloxRoute-Scaling-Bitcoin.pdf', encoding='utf_8').decode('utf-8')
+text = textract.process('./SED712-Mapillary-Research.pdf', encoding='utf_8').decode('utf-8')
 text = text.replace('\n', ' ')
 text = pre_process(text)
 # print(len(text))

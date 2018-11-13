@@ -29,6 +29,7 @@ up
 unto
 until
 unless
+like
 unlike
 unliker
 unlikest
@@ -310,6 +311,7 @@ get
 gets
 getting
 b
+basically
 by
 byandby
 by-and-by
@@ -503,6 +505,7 @@ some
 somewhere
 somewhat
 something
+time
 sometimest
 sometimes
 sometimer
@@ -536,6 +539,7 @@ sith
 six
 stop
 stopped
+okay
 p
 plaintiff
 plenty
