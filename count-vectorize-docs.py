@@ -18,9 +18,6 @@ print('length of articles', len(articles))
 
 df_articles = pd.DataFrame(articles)
 
-# print(df_articles['full_text'][1])
-# print(df_articles.dtypes)
-
 docs = df_articles['full_text'].tolist()
 
 cv=CountVectorizer(max_df=0.85,stop_words=stopwords.words('english'))
