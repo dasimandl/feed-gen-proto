@@ -15,15 +15,16 @@ df_articles = pd.DataFrame(articles)
 
 docs = df_articles['full_text'].tolist()
 
-cv=CountVectorizer(max_df = 0.85, stop_words = custom_stopwords)
-word_count_vector=cv.fit_transform(docs)
+vectorizer = TfidfVectorizer(max_df=0.85, smooth_idf=True, use_idf=True,stop_words=custom_stopwords)
+X = vectorizer.fit_transform(docs)
 
-tfidf_transformer=TfidfTransformer(smooth_idf=True,use_idf=True)
-tfidf_transformer.fit(word_count_vector)
+# tfidf_transformer=TfidfTransformer(smooth_idf=True,use_idf=True)
+# tfidf_transformer.fit(word_count_vector)
 
-save_obj(word_count_vector, 'word_count_vector')
+# save_obj(word_count_vector, 'word_count_vector')
 
-print(list(cv.vocabulary_.keys())[:50])
+print(list(vectorizer.vocabulary_.keys())[:50])
+print(vectorizer.vocabulary_['tung'])
 
 
 # test = "aws plain english expeditedssl fast easy aws ssl aws plain english amazon web service plain english hey hear new aws service containercache elasticast course plus opaquely name service decide plain english description need hey sponsor sendcheckit sponsored mean work update list email newsletter run app service matter aws end service interact call amazon virtual server host bit think computer http www linode com handwavy instance similar virtual private server linode digitalocean rackspace iam call user key cert set additional user set new aws key policy call amazon unlimited ftp server store image asset website keep backup share file service host static website aws service write read plain english bucket object vpc call amazon virtual colocated rack overcome objection stuff internet add additional layer security aws service little network small piece big network familar networking vlans lambda call aws app script run little self contain snippet java python discrete task sort combination queue execution store execute change aws setup respond event dynamodb lambda plain english web developer service set web app end similar find heroku addon marketplace api gateway call api proxy proxy apps api throttle bad client traffic test new version present method cleanly scale rds call amazon sql app mysql postgres oracle database heroku postgres route call amazon dns domains buy new domain set dns record domain dnsimple godaddy gandi call amazon transactional email email password reset notification newsletter write great idea sendgrid mandrill postmark cloudfront call amazon cdn website load fast spread static file delivery close user maxcdn akamai cloudsearch call amazon fulltext search pull data rds search instance jimmy sphinx solr elasticsearch dynamodb call amazon nosql app massively scalable key valueish store mongolab elasticache call amazon memcached app memcached redis redis memcachier elastic transcoder call amazon begin cut deal video weirdness change format compress sqs call amazon queue store data future processing queue lingo store message email sms sqs logic place put take rabbitmq sidekiq waf call aws firewall block bad request cloudfront protected site aka people try password admin sophos kapersky mobile app developer service service work mobile developer cognito call amazon oauth service give end user non aws ability log google facebook oauth device farm call amazon drawer old android device test app bunch android device simultaneously mobiletest emulator mobile analytics call spot name amazon product manager take note track people inside app flurry call amazon messenger mobile notification email sms message urbanairship twilio ops deployment service automate manage deploy service codecommit call amazon github version control host git github bitbucket deploy call bad codecommit repo github bunch instance sane way heroku capistrano codepipeline call amazon continuous integration run automated test stuff depend pass test circleci travis container service call amazon docker service put dockerfile instance run website elastic beanstalk call amazon platform service move app host heroku aws expensive heroku bluemix modulus enterprise corporate service service business network appstream call amazon citrix put copy windows application window machine people remote access citrix rdp direct connect call pretty spot actually pay telco aws dedicate lease line data center network aws cheap internet data toll road turnpike bypass crowded side street directory service call pretty spot actually tie apps need microsoft active directory control workdocs call amazon unstructured file share word doc colleague dropbox dataanywhere workmail call amazon company email give company email system calendar google apps domain workspace call amazon remote computer give standard window desktop remotely control service catalog call amazon setup give aws user group access preset apps build read guide storage gateway call pretend part corporate network buying storage keep word doc automate file corporate network easy big data service service ingest manipulate massage data data pipeline call amazon etl extract transform load data aws schedule happen alert fail elastic map reduce call amazon hadooper iterate massive text file raw data keep treasure data glacier call slow amazon backup backup keep beware cost data back hurry long term archive kinesis call amazon high throughput ingest data quickly analytics people retweeting kanye later aws service analyze kafka redshift call amazon data warehouse store whole bunch analytics data processing dump machine learn call skynet predict future behavior exist data problem fraud detection people buy buy swf call amazon queue build service deciders worker top accomplish set task sqs logic set inside service determine happen ironworker snowball call aws big old portable storage bunch hard drive attach network large amount terabyte data aws ship network attach storage device aws aws management service aws difficult manage invent bunch service sell easy manage cloudformation call amazon service setup set bunch connect aws service cloudtrail call amazon log log aws stack api call cloudwatch call amazon status pager alert aws service mess disconnect pagerduty statuspage config call amazon configuration management keep insane large aws setup change happen track opsworks call amazon chef handle run application auto scaling trust advisor call amazon pennypincher find pay aws setup unused instance inspector call amazon auditor scan aws setup determine setup insecure way alert logic hey sponsor sendcheckit sponsored mean work update list email newsletter buzzwordcompliant llc service expeditedssl support expeditedssl com"
@@ -36,18 +37,13 @@ test = "episode google search allow human find access across human enters unstru
 
 
 # you only needs to do this once, this is a mapping of index to
-feature_names=cv.get_feature_names()
+feature_names=vectorizer.get_feature_names()
 
 #generate tf-idf for the given document
-tf_idf_vector=tfidf_transformer.transform(cv.transform([test]))
-
-print('cv trans', cv.transform([test]))
-print('tfidf vec', tf_idf_vector)
-print('tfidf vec', tf_idf_vector.shape)
+tf_idf_vector=vectorizer.transform([test])
 
 #sort the tf-idf vectors by descending order of scores
 sorted_items=sort_coo(tf_idf_vector.tocoo())
-print('*********COO**********', tf_idf_vector.tocoo())
 print('sorted',sorted_items[:30])
 #extract only the top n; n here is 10
 keywords=extract_topn_from_vector(feature_names,sorted_items,40)
