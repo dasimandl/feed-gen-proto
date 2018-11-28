@@ -1,37 +1,50 @@
 import textract
+import sys
+import os
 import pandas as pd
+from pprint import pprint
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 from nltk.corpus import stopwords
-import sys
-sys.path.append("./utils")
-from helperFunctions import *
+# sys.path.append("./utils")
+# from helper_functions import *
+from pymongo import MongoClient
 
-custom_stopwords = get_stopwords()
+# mongoDB = os.environ['MONGO_DB']
+mongoDB = 'mongodb://192.168.99.100:27017/sedaily-mongo'
+client = MongoClient(mongoDB)
+db = client.get_database()
+posts = db.posts.find()
+pprint(list(posts)[:1])
 
-articles = pd.read_pickle('./pickle-files/preprocessed_docs.pkl')
+for post in posts:
+  pprint('post',post)
 
-print('length of articles', len(articles))
+# custom_stopwords = get_stopwords()
 
-df_articles = pd.DataFrame(articles)
+# articles = pd.read_pickle('./pickle-files/preprocessed_docs.pkl')
 
-corpus = df_articles['full_text'].tolist()
+# print('length of articles', len(articles))
 
-vectorizer = TfidfVectorizer(max_df=0.85, smooth_idf=True, use_idf=True,stop_words=custom_stopwords)
-X = vectorizer.fit_transform(corpus)
+# df_articles = pd.DataFrame(articles)
 
-# get feature to index mapping
-feature_names = vectorizer.get_feature_names()
+# corpus = df_articles['full_text'].tolist()
 
-#generate tf-idf for the given document
-tf_idf_vector = vectorizer.transform([test])
+# vectorizer = TfidfVectorizer(max_df=0.85, smooth_idf=True, use_idf=True,stop_words=custom_stopwords)
+# X = vectorizer.fit_transform(corpus)
 
-#sort the tf-idf vectors by descending order of scores
-sorted_items = sort_coo(tf_idf_vector.tocoo())
-print('sorted',sorted_items[:30])
-#extract only the top n; n here is 10
-keywords = extract_topn_from_vector(feature_names,sorted_items,20)
-print('raw keywords', keywords)
-# now print the results
-print("\n===Keywords===")
-for k in keywords:
-    print(k,keywords[k])
+# # get feature to index mapping
+# feature_names = vectorizer.get_feature_names()
+
+# #generate tf-idf for the given document
+# tf_idf_vector = vectorizer.transform([test])
+
+# #sort the tf-idf vectors by descending order of scores
+# sorted_items = sort_coo(tf_idf_vector.tocoo())
+# print('sorted',sorted_items[:30])
+# #extract only the top n; n here is 10
+# keywords = extract_topn_from_vector(feature_names,sorted_items,20)
+# print('raw keywords', keywords)
+# # now print the results
+# print("\n===Keywords===")
+# for k in keywords:
+#     print(k,keywords[k])
