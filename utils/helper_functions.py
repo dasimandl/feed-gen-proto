@@ -1,3 +1,4 @@
+#! /bin/usr
 import re
 from nltk import pos_tag
 from nltk.tokenize import word_tokenize
@@ -5,7 +6,12 @@ from nltk.corpus import wordnet as wn
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.corpus import stopwords
 import pickle
+import textract
+import requests
+from urllib.request import urlopen, Request, urlretrieve
 
+
+lemma = WordNetLemmatizer()
 
 def get_stopwords():
   with open('./utils/stopwords.txt') as f:
@@ -56,15 +62,30 @@ def get_wordnet_pos(tag):
         return wn.ADV
     else:
         return wn.VERB
+def download_pdf(url):
+    formattedUrl = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    response = urlopen(formattedUrl)
+    filename = './tmp/' + url.split('/')[7]
+    return save_pdf(response, filename)
 
-def pre_process_transcript (text):
-  text = text.lower()
-  text = re.sub("(\\d|\\W|\\_)+"," ",text)
-  text = re.sub("software engineering daily|transcript|introduction"," ",text)
-  text = re.sub('(sponsor message).*?(interview)'," ",text)
-  text = re.sub('(end of interview).+'," ",text)
-  tokens = word_tokenize(text)
-  pos_tokens = pos_tag(tokens)
-  lemmatized_tokens = [lemma.lemmatize(token[0], pos=get_wordnet_pos(token[1])) for token in pos_tokens]
-  text = " ".join(word for word in lemmatized_tokens if word not in custom_stopwords and len(word) > 3)
-  return text
+def save_pdf(pdf, filename):
+    file = open(filename, 'wb')
+    file.write(pdf.read())
+    file.close()
+    return filename
+
+def pre_process_transcript (url):
+    filename = download_pdf(url)
+    text = textract.process(filename, encoding='utf_8').decode('utf-8')
+    text = text.replace('\n', ' ')
+    text = text.replace('\n', ' ')
+    text = text.lower()
+    text = re.sub("(\\d|\\W|\\_)+"," ",text)
+    text = re.sub("software engineering daily|transcript|introduction"," ",text)
+    text = re.sub('(sponsor message).*?(interview)'," ",text)
+    text = re.sub('(end of interview).+'," ",text)
+    tokens = word_tokenize(text)
+    pos_tokens = pos_tag(tokens)
+    lemmatized_tokens = [lemma.lemmatize(token[0], pos=get_wordnet_pos(token[1])) for token in pos_tokens]
+    text = " ".join(word for word in lemmatized_tokens if word not in get_stopwords() and len(word) > 3)
+    return text

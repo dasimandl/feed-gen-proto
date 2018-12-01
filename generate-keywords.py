@@ -1,23 +1,29 @@
 import textract
 import sys
 import os
+import requests
 import pandas as pd
 from pprint import pprint
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
 from nltk.corpus import stopwords
-# sys.path.append("./utils")
-# from helper_functions import *
+sys.path.append("./utils")
+from helper_functions import *
 from pymongo import MongoClient
+from urllib.request import urlopen, Request
 
 # mongoDB = os.environ['MONGO_DB']
-mongoDB = 'mongodb://192.168.99.100:27017/sedaily-mongo'
+mongoDB = 'mongodb://192.168.99.100/sedaily'
 client = MongoClient(mongoDB)
 db = client.get_database()
-posts = db.posts.find()
-pprint(list(posts)[:1])
+# posts = db.posts.find()
+posts = requests.get('http://192.168.99.100:4040/api/posts?transcripts=true&limit=3').json()
 
+print(len(posts))
 for post in posts:
-  pprint('post',post)
+  transcriptUrl = post['transcriptUrl']
+  _id = post['_id']
+  print(transcriptUrl, _id)
+  print(pre_process_transcript(transcriptUrl))
 
 # custom_stopwords = get_stopwords()
 
