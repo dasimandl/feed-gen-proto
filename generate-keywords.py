@@ -18,7 +18,7 @@ db = client.get_database()
 # posts = db.posts.find()
 
 posts = requests.get(
-    'http://192.168.99.100:4040/api/posts?transcripts=true&limit=1').json()
+    'http://192.168.99.100:4040/api/posts?transcripts=true&limit=500').json()
 
 print(len(posts))
 
@@ -47,7 +47,7 @@ for post in posts:
     tags = post['filterTags']
     print('mongoDb _id', postId, '\n', 'tags: ', tags, '\n')
     (filename, text) = pre_process_transcript(transcriptUrl)
-    # os.remove(filename)
+    os.remove(filename)
 
     tf_idf_vector = vectorizer.transform([text])
 
@@ -69,4 +69,4 @@ for post in posts:
         db.posts.update({'_id': ObjectId(post['_id'])}, {'$set': { 'keywords': keywords }}, upsert=False, multi=False)
     except:
         print('failed to update')
-    db.close()
+    # db.close()
