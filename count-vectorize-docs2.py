@@ -3,7 +3,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, Tf
 from nltk.corpus import stopwords
 import sys
 sys.path.append("./utils")
-from helperFunctions import *
+from helper_functions import *
 
 custom_stopwords = get_stopwords()
 
@@ -15,7 +15,7 @@ df_articles = pd.DataFrame(articles)
 
 docs = df_articles['full_text'].tolist()
 
-vectorizer = TfidfVectorizer(max_df=0.85, smooth_idf=True, use_idf=True,stop_words=custom_stopwords)
+vectorizer = TfidfVectorizer(max_df=0.85, smooth_idf=True, use_idf=True,stop_words=custom_stopwords, ngram_range=(1,2))
 X = vectorizer.fit_transform(docs)
 
 # tfidf_transformer=TfidfTransformer(smooth_idf=True,use_idf=True)

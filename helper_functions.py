@@ -30,6 +30,8 @@ def sort_coo(coo_matrix):
     tuples = zip(coo_matrix.col, coo_matrix.data)
     return sorted(tuples, key=lambda x: (x[1], x[0]), reverse=True)
 
+def reverse_feature_mapping(feature_names):
+    return dict((k,i) for i, k in enumerate(feature_names))
 
 def extract_topn_from_vector(feature_names, sorted_items, topn=20):
     """get the feature names and tf-idf score of top n items"""

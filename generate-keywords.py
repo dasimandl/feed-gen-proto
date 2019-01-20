@@ -6,7 +6,7 @@ import os
 import requests
 import pandas as pd
 from pprint import pprint
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, TfidfTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.corpus import stopwords
 from helper_functions import *
 from bson.objectid import ObjectId
@@ -40,33 +40,32 @@ X = vectorizer.fit_transform(corpus)
 feature_names = vectorizer.get_feature_names()
 
 # generate tf-idf for the given document
-for post in posts:
-    keywords = {}
-    transcriptUrl = post['transcriptUrl']
-    postId = post['_id']
-    tags = post['filterTags']
-    print('mongoDb _id', postId, '\n', 'tags: ', tags, '\n')
-    (filename, text) = pre_process_transcript(transcriptUrl)
-    os.remove(filename)
+# for post in posts:
+#     keywords = {}
+#     transcriptUrl = post['transcriptUrl']
+#     postId = post['_id']
+#     tags = post['filterTags']
+#     print('mongoDb _id', postId, '\n', 'tags: ', tags, '\n')
+#     (filename, text) = pre_process_transcript(transcriptUrl)
+#     os.remove(filename)
 
-    tf_idf_vector = vectorizer.transform([text])
+#     tf_idf_vector = vectorizer.transform([text])
 
-    # sort the tf-idf vectors by descending order of scores
-    sorted_items = sort_coo(tf_idf_vector.tocoo())
-    print('sorted', sorted_items[:30])
-    # extract only the top n; n here is 10
-    keywords = extract_topn_from_vector(feature_names, sorted_items, 30)
-    for tag in tags:
-        keywords[tag['slug']] = 1.0
-    print('raw keywords', keywords)
-    print("\n===Text===")
-    print(filename, text)
-    # now print the results
-    print("\n===Keywords===")
-    for k in keywords:
-        print(k, keywords[k])
-    try:
-        db.posts.update({'_id': ObjectId(post['_id'])}, {'$set': { 'keywords': keywords }}, upsert=False, multi=False)
-    except:
-        print('failed to update')
-    # db.close()
+#     # sort the tf-idf vectors by descending order of scores
+#     sorted_items = sort_coo(tf_idf_vector.tocoo())
+#     print('sorted', sorted_items[:30])
+#     # extract only the top n; n here is 10
+#     keywords = extract_topn_from_vector(feature_names, sorted_items, 30)
+#     for tag in tags:
+#         keywords[tag['slug']] = 1.0
+#     print('raw keywords', keywords)
+#     print("\n===Text===")
+#     print(filename, text)
+#     # now print the results
+#     print("\n===Keywords===")
+#     for k in keywords:
+#         print(k, keywords[k])
+#     try:
+#         db.posts.update({'_id': ObjectId(post['_id'])}, {'$set': { 'keywords': keywords }}, upsert=False, multi=False)
+#     except:
+#         print('failed to update')

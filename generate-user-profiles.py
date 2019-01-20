@@ -3,12 +3,32 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 import pandas as pd
 from functools import reduce
+from helper_functions import *
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 mongoDB = 'mongodb://192.168.99.100/sedaily'
 client = MongoClient(mongoDB)
 db = client.get_database()
 
 users = db.users.find({})
+
+custom_stopwords = get_stopwords()
+
+articles = pd.read_pickle('./pickle-files/preprocessed_docs.pkl')
+
+print('length of articles', len(articles))
+
+df_articles = pd.DataFrame(articles)
+
+corpus = df_articles['full_text'].tolist()
+
+vectorizer = TfidfVectorizer(
+    max_df=0.85, smooth_idf=True, use_idf=True, stop_words=custom_stopwords)
+X = vectorizer.fit_transform(corpus)
+
+# get feature to index mapping
+feature_names = vectorizer.get_feature_names()
+feature_indexes = reverse_feature_mapping(feature_names)
 
 for user in users:
     user_id = ObjectId(user['_id'])
@@ -47,5 +67,10 @@ for user in users:
         user_profile = pd.DataFrame({'key': user_features['key'], 'value': sum}).sort_values('value', ascending=False)
         # print(user_features)
         print(user_profile)
+        for key in user_profile['key']:
+            try:
+                print(feature_indexes[key], key)
+            except Exception as e:
+                print(e, 'key doesnt exist', key)
     except Exception as e:
         print('error: ', e)
